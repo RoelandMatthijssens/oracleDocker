@@ -28,21 +28,6 @@ RUN for i in 0 1 2 3 4 5 6 S; do ln -s /etc/rc$i.d /etc/rc.d/rc$i.d; done
 RUN mkdir -p /u01/app/oracle
 RUN chown -R oracle:dba /u01
 
-#RUN echo "#">> /etc/sysctl.conf
-#RUN echo "# Oracle 11gR2 entries">> /etc/sysctl.conf
-#RUN echo "fs.aio-max-nr=1048576" >> /etc/sysctl.conf
-#RUN echo "fs.file-max=6815744" >> /etc/sysctl.conf
-#RUN echo "kernel.shmall=2097152" >> /etc/sysctl.conf
-#RUN echo "kernel.shmmni=4096" >> /etc/sysctl.conf
-#RUN echo "kernel.sem=250 32000 100 128" >> /etc/sysctl.conf
-#RUN echo "net.ipv4.ip_local_port_range=9000 65500" >> /etc/sysctl.conf
-#RUN echo "net.core.rmem_default=262144" >> /etc/sysctl.conf
-#RUN echo "net.core.rmem_max=4194304" >> /etc/sysctl.conf
-#RUN echo "net.core.wmem_default=262144" >> /etc/sysctl.conf
-#RUN echo "net.core.wmem_max=1048586" >> /etc/sysctl.conf
-#RUN echo "kernel.shmmax=1073741824" >> /etc/sysctl.conf
-
-#RUN sysctl -p
 
 RUN cp /etc/security/limits.conf /etc/security/limits.conf.original
 RUN echo "#Oracle 11gR2 shell limits:">>/etc/security/limits.conf
@@ -60,14 +45,16 @@ RUN useradd nobody
 
 ADD ../oraclezips/database /tmp/oracle/database
 ADD db_install.rsp /tmp/db_install.rsp
+ADD setKernelParams.sh /tmp/setKernelParams.sh
+
+RUN /tmp/setKernelParams.sh
 
 RUN mv /tmp/oracle/database .
 RUN mv /tmp/db_install.rsp .
 RUN chmod 777 -R database
 RUN chmod 777 db_install.rsp
 
-RUN database/runInstaller -silent 
+RUN database/runInstaller -silent -responseFile $PWD/db_install.rsp
+RUN /oracle/oracleHome/root.sh
 
-
-#runuser -l oracle -c "/home/oracle/database/runInstaller -ignoreSysPrereqs"
 #volumelocation = /oracle/oracleHome
