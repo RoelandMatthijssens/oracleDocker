@@ -51,11 +51,13 @@ RUN echo "oracle hard nproc 16384">>/etc/security/limits.conf
 RUN echo "oracle soft nofile 1024">>/etc/security/limits.conf
 RUN echo "oracle hard nofile 65536">>/etc/security/limits.conf
 
-ADD linux_11gR2_database_1of2.zip /tmp/oraceleZip1.zip
-ADD linux_11gR2_database_2of2.zip /tmp/oraceleZip2.zip
+ADD ../oraclezips/database /tmp/oracle/database
+ADD db_install.rsp /tmp/db_install.rsp
 
-RUN unzip /tmp/oraceleZip1.zip -d /home/oracle
-RUN unzip /tmp/oraceleZip2.zip -d /home/oracle
-
+mv /tmp/oracle/database .
+mv /tmp/db_install.rsp .
 RUN chmod 777 -R database
+
+
 #runuser -l oracle -c "/home/oracle/database/runInstaller -ignoreSysPrereqs"
+#volumelocation = /oracle/oracleHome
