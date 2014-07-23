@@ -1,0 +1,11 @@
+CREATE ROLE PROTOGO_ROLE;
+GRANT CREATE SESSION, CREATE CLUSTER, CREATE INDEXTYPE, CREATE OPERATOR, CREATE PROCEDURE, CREATE SEQUENCE, CREATE TABLE, CREATE TRIGGER, CREATE TYPE TO PROTOGO_ROLE;
+
+create tablespace PROTOGO logging datafile 'C:\app\JeroenRemans\oradata\ORCL\PROTOGO_2.DBF' size 256M autoextend on next 32;
+
+create user protogo identified by protogo default tablespace PROTOGO;
+GRANT unlimited tablespace to protogo ;
+grant PROTOGO_ROLE to protogo;
+
+DROP USER protogo CASCADE;
+DROP TABLESPACE PROTOGO INCLUDING CONTENTS CASCADE CONSTRAINTS;
