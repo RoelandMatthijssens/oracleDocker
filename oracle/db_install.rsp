@@ -357,7 +357,7 @@ oracle.install.db.config.asm.ASMSNMPPassword=
 #
 #  Example   : MYORACLESUPPORT_USERNAME=metalink
 #------------------------------------------------------------------------------
-MYORACLESUPPORT_USERNAME=support
+MYORACLESUPPORT_USERNAME=roeland.matthijssens@osudio.com
 
 #------------------------------------------------------------------------------
 # Specify the My Oracle Support Account Username password.
@@ -382,7 +382,7 @@ SECURITY_UPDATES_VIA_MYORACLESUPPORT=false
 #
 # Example    : DECLINE_SECURITY_UPDATES=false
 #------------------------------------------------------------------------------
-DECLINE_SECURITY_UPDATES=false
+DECLINE_SECURITY_UPDATES=true
 
 #------------------------------------------------------------------------------
 # Specify the Proxy server name. Length should be greater than zero.

@@ -7,11 +7,6 @@ RUN echo "LETS GO" \
 	&& echo "kernel.sem = 250 32000 100 128" >> /etc/sysctl.conf \
 	&& echo "net.ipv4.ip_local_port_range = 9000 65500" >> /etc/sysctl.conf \
 	&& /sbin/sysctl -p \
-	&& echo "oracle              soft    nproc   16384" >> /etc/security/limits.conf \
-	&& echo "oracle              hard    nproc   16384" >> /etc/security/limits.conf \
-	&& echo "oracle              soft    nofile  4096" >> /etc/security/limits.conf \
-	&& echo "oracle              hard    nofile  65536" >> /etc/security/limits.conf \
-	&& echo "oracle              soft    stack   10240" >> /etc/security/limits.conf \
 	&& yum install -y binutils-2*x86_64* \
 	&& yum install -y glibc-2*x86_64* nss-softokn-freebl-3*x86_64* \
 	&& yum install -y glibc-2*i686* nss-softokn-freebl-3*i686* \
@@ -38,6 +33,8 @@ RUN echo "LETS GO" \
 	&& yum install -y numactl-devel-2*x86_64* \
 	&& yum install -y compat-libstdc++-33*i686* \
 	&& yum install -y compat-libcap* \
+	&& yum install -y passwd \
+	&& yum install -y expect \
 	&& yum install -y vim \
 
 	&& groupadd -g 501 oinstall \
@@ -45,4 +42,25 @@ RUN echo "LETS GO" \
 	&& groupadd -g 503 oper \
 	&& groupadd -g 504 asmadmin \
 	&& groupadd -g 506 asmdba \
-	&& groupadd -g 505 asmoper 
+	&& groupadd -g 505 asmoper
+
+RUN echo "LETS TAKE A SHORT BREATH" \
+	&& yum install -y libXext \
+	&& useradd -u 502 -g oinstall -G dba,asmdba,oper oracle \
+	&& echo "root soft nproc unlimited" > /etc/security/limits.d/20-nproc.conf \
+	&& echo "* - nproc 16384" >> /etc/security/limits.d/20-nproc.conf \
+	&& echo "oracle              soft    nproc   16384" >> /etc/security/limits.conf \
+	&& echo "oracle              hard    nproc   16384" >> /etc/security/limits.conf \
+	&& echo "oracle              soft    nofile  4096" >> /etc/security/limits.conf \
+	&& echo "oracle              soft    stack   10240" >> /etc/security/limits.conf \
+	&& echo "oracle              hard    nofile  65536" >> /etc/security/limits.conf.bak \
+	&& { echo "osudioadmin"; echo "osudioadmin"; } | passwd oracle \
+	&& mkdir -p /oraclehome/app/oracle/product/11.2.0/db_1 \
+	&& chown -R oracle:oinstall /oraclehome \
+	&& chmod -R 775 /oraclehome
+
+ADD oracleprofile /home/oracle/.bash_profile
+RUN chown oracle:oinstall /home/oracle/.bash_profile
+ADD db_install.rsp /db_install.rsp
+
+#RUN su oracle -c "/database/runInstaller -silent -responseFile /db_install.rsp"
